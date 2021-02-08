@@ -17,3 +17,10 @@ Sampling Distributions - Lab2
 Calculating descriptive statistics and plotting - Lab2  
 Sampling Error - Lab2  
 
+Experimental Design - Lab3  
+Experimental Results: p-hat, SE - Lab3  
+Testing the hypothesis: P-values - Lab3
+Calculating the null distribution - Lab3
+Calculating the P-value - Lab3
+Using R's built-in function - Lab3
+The importance of sample size - Lab3

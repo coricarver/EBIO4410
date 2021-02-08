@@ -181,7 +181,7 @@ If we are observing coin tosses and we had 9 heads out of 12 tosses, observation
 
 \textcolor{red}{\textbf{Question 8:} What observations are as or more extreme than 18/25? Use the bar chart above to help you visualize this.}
 
-*Observations that are as or more extreme than 18/25 include 19/25, 20/25, 21/25, 22/25, 23/25, 24/25 and 25/25 OR 0/25, 1/25, 2/25, 3/25, 4/25, 5/25, 6/25, and 7/25. * 
+*Observations that are as or more extreme than 18/25 include 18/25, 19/25, 20/25, 21/25, 22/25, 23/25, 24/25 and 25/25 OR 0/25, 1/25, 2/25, 3/25, 4/25, 5/25, 6/25, and 7/25. * 
 
 To get the P-value, we'll sum all the probabilities in our dataframe that correspond to observations as or more extreme than 18/25. Think of this as summing the areas of the bar chart corresponding to the tails of the distribution. Switch out the *2* and *5* in the code below to get the P-value for the guppy data. 
 
@@ -206,7 +206,7 @@ binom.test(3, n = 10, p = 0.5, alternative = "two.sided")
 Use the `binom.test` function, modifying it as you see fit, to get a P-value for the guppy data. Make sure it matches your P-value above. If not, go back and troubleshoot the P-value you got by hand!
 
 ```{r}
-binom.test(18, n = 25, p = 0.05, alternative = "two.sided")
+binom.test(18, n = 25, p = 0.5, alternative = "two.sided")
 ```
 
 
@@ -217,20 +217,23 @@ Now, say the researchers only tested 7 female guppies, instead of 25. The observ
 \textcolor{red}{\textbf{Question 10:} Calculate $\hat{p}$ (p-hat) and its standard error with the new sample. Again, don't count up the number of successes in your head, but create a vector with the observations and use R's embedded functions.}
 
 ```{r}
-# Your code here
+guppy.smallerTrials <- c(0, 1, 0, 1, 1, 1, 1)
+propSucc <- sum(guppy.smallerTrials) / length(guppy.smallerTrials)
+SEsucc <- sqrt((propSucc * (1-propSucc))/length(guppy.smallerTrials))
+SEsucc
 ```
 
-*Your estimates here*
+*The p-hat for this smaller sample size is 0.7142857, with a SE of 0.1707469.*
 
 How does this p-hat compare to the observed p-hat from Question 3?
 
 \textcolor{red}{\textbf{Question 11:} Now calculate and interpret the P-value from the new set of 7 observations. You may use the \texttt{binom.test()} function. Why does the P-value change drastically, even though p-hat is similar to our first set of observations?} 
 
 ```{r}
-# Your code here
+binom.test(5, n = 7, p = 0.5, alternative = "two.sided")
 ```
 
-*Your P-value and interpretation here * 
+*With a much smaller sample size the p-value becomes 0.4531. The p-value changes drastically despite a similar p-hat to our first observation because a smaller sample size gives us much larger confidence intervals and as sample size increases the impact stochastic error is reduced. * 
 
 
 

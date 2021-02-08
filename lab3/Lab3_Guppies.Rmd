@@ -233,7 +233,7 @@ How does this p-hat compare to the observed p-hat from Question 3?
 binom.test(5, n = 7, p = 0.5, alternative = "two.sided")
 ```
 
-*With a much smaller sample size the p-value becomes 0.4531. The p-value changes drastically despite a similar p-hat to our first observation because a smaller sample size gives us much larger confidence intervals and as sample size increases the impact stochastic error is reduced. * 
+*With a much smaller sample size the p-value becomes 0.4531. The p-value changes drastically despite a similar p-hat to our first observation because a smaller sample size gives us much larger confidence intervals and as sample size increases the impact of stochastic error is reduced. * 
 
 
 

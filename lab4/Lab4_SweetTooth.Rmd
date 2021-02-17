@@ -210,7 +210,7 @@ Use the class' data to see if students can discriminate between Jelly Belly flav
 
 \textcolor{red}{\textbf{Question 1: 1 point} What is the null hypothesis being tested here? What is the alternative hypothesis?}
 
-*Null hypothesis: Students cannot identify Jelly Belly flavors better than chance.*
+*Null hypothesis: Students cannot identify Jelly Belly flavors better than chance (1/6th).*
 
 *Alternative hypothesis: Students can identify Jelly Belly flavors better than chance.*
 
@@ -218,15 +218,17 @@ Use the class' data to see if students can discriminate between Jelly Belly flav
 \textcolor{red}{\textbf{Question 2: 1 point} Run the appropriate statistical test. Include code for reading in the class' data from a csv. Hint: there are two ways to approach this data; one will give an exact result, and the other an approximation. Either approach is fine here. Report the p-value and test statistic.}
 
 ```{r}
-# your code here
 jellyBeanData <- read.csv("JellyBelly.csv")
 structure(jellyBeanData)
 
-#Statistical Test Chosen: chi-squared goodness of fit test because it will compare a distribution of observed counts to a distribution of expected counts under some probability model.
+#Statistical Test Chosen: chi-squared goodness of fit test because it will compare a distribution of
+#observed counts to a distribution of expected counts under some probability model.
 guessedRight <- sum(jellyBeanData$Correct == 1)
 guessedWrong <- sum(jellyBeanData$Correct == 0)
 jellyBeanObserved <- c(guessedRight, guessedWrong)
-nullProp <- c(1/2, 1/2)
+# 1/6 is the probability that by random chance students could have guessed correctly
+#5/6 is the probability that by random chance students could have guessed incorrectly
+nullProp <- c(1/6, 5/6)
 sum(nullProp) #sanity check
 
 #Let's plot
@@ -239,18 +241,18 @@ colnames(beanData)<- c("Correct", "Incorrect")
 beanData
 
 colors<-c("slateblue2", "orchid")
-barplot(height = beanData, beside=TRUE, cex.names = 0.8, ylim = c(0,40),
+barplot(height = beanData, beside=TRUE, cex.names = 0.8, ylim = c(0,50),
         legend = c("Observed", "Expected"), col=colors)
 
 chisq.test(x = jellyBeanObserved, p = nullProp)
 
 ```
 
-*P-value: 0.5465, Chi-squared: 0.36364* 
+*P-value: 2.992e-07, Chi-squared: 26.255* 
 
 \textcolor{red}{\textbf{Question 3: 2 points} Interpret the results of your statistical test (be specific about what the P-value actually means). Explain what it reveals about the initial question.}
 
-*The output of this tells us that there is a 55% chance of observing our jelly bean distribution OR jelly bean distributions even further from the null, if the null hypothesis is true. Since it is not < 0.05, we cannot reject the null hypothesis. Therefore, students cannot identify Jelly Belly flavors better than chance. *
+*The output of this tells us that there is a very small chance (less than 0.01%) of observing our jelly bean distribution OR jelly bean distributions even further from the null, if the null hypothesis is true. Since it is < 0.05, we reject the null hypothesis. Students CAN identify Jelly Belly flavors better than chance. Our test statistic is 26.3. *
 
 # Experiment 2: Pepsi vs. Coke 
 Use the class' data to evaluate whether taste ability differs between frequent, occasional, and non-soda-drinkers.
@@ -268,16 +270,28 @@ See the summaries at the beginning of this lab, or the background document on Ca
 
 ```{r}
 sodaData <- read.csv("CokevPepsi.csv")
+head(sodaData)
 
+## Create a summary table for plotting
+sodaTable <- table(sodaData$SodaFrequency, sodaData$Correct)
+addmargins(sodaTable)
+
+## Let's Plot
+mosaicplot( sodaTable, col = c("firebrick", "pink"), cex.axis = 1, 
+            sub = "Soda Intake Frequency", ylab = "Ability to Correctly Taste", 
+            main = "Soda Intake Frequency and Taste Ability")
+
+##Chi Test
+SodaChiTest <- chisq.test(y = sodaData$Correct, x = sodaData$SodaFrequency, correct = FALSE)
+SodaChiTest
 ```
 
-*Your p-value and test statistic here* 
+*P-value: 0.4083, Test Statistic: 1.7917* 
 
 
 \textcolor{red}{\textbf{Question 6: 2 points} Interpret the results of your statistical test and explain what it reveals about the initial question.}
 
-*Your answer here*
-
+*The output of this tells us that there is a 41% chance of observing as big of a difference in taste ability (or even bigger differences) between soda intake frequency categories if there really were no link between soda intake frequency and taste ability. Since it is > 0.05, we cannot reject the null hypothesis. Taste ability does not differ between frequent, occasional, and non-soda-drinkers. Our test statistic is 1.7917.*
 
 # Plotting data
 \textcolor{red}{\textbf{Question 7: 1 point} For experiment2 (Cola), create a plot to illustrate the data. Think about what type of plot (mosaic or paired bar) is appropriate and follow closely that example above, substituting in your data for the example data.}
@@ -286,7 +300,9 @@ Note: The default plot function will likely not produce a perfect plot. You will
 
 ```{r}
 
-#your code here
+mosaicplot( sodaTable, col = c("firebrick", "pink"), cex.axis = 1, 
+            sub = "Soda Intake Frequency", ylab = "Ability to Correctly Taste", 
+            main = "Soda Intake Frequency and Taste Ability")
 
 ```
 

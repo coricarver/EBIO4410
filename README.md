@@ -24,3 +24,11 @@ Calculating the null distribution - Lab3
 Calculating the P-value - Lab3
 Using R's built-in function - Lab3
 The importance of sample size - Lab3
+
+Chi-Squared Goodness of Fit Test - Lab4
+Basic Barplot - Lab4
+rBind Table Example - Lab4
+Ch-Squared Contingency Test - Lab4
+Summary Table - Lab4
+Basic Mosiac Plot - Lab4
+

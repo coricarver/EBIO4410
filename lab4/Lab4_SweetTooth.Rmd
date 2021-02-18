@@ -1,6 +1,6 @@
 ---
 title: "Lab 4: Sweet Tooth"
-author: "YCori Carver"
+author: "Cori Carver"
 date: "Feb. 11 2021"
 output:
   pdf_document: default

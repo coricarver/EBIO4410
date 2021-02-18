@@ -1,0 +1,96 @@
+---
+title: "Example of p-hacking"
+author: "Andrew McAdam"
+date: "16/02/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# What is P-Hacking
+
+In short, p-hacking is any research activity that is designed to manipulate the p-value of a statistical test to try and get it below the 0.05 (alpha) threshold.  These practices could include changing our model or type of analysis to try and get the p-value below 0.05 or continuing or discontinuing data collection as a result of the analysis of existing data to see whether the p-value was below 0.05.
+
+I will be honest and say that I was taught to analyze my data partway through the field season to see "whether or not I had already answered my question".  It is expensive and time consuming to collect data so the idea is that if you already have enough data to answer your question, then why continue to stay in the field?  
+
+It is certainly not a good idea to collect more data than you need to, but the sneaky problem in this practice is that the decision about whether or not to continue data collection is NOT an objective one.  Instead it is based on the current results with the idea that if the hypothesized effect is significant (P < 0.05) then stop collecting data, but if the effect is 'not yet' significant (P > 0.05) then we ought to continue to collect data.
+
+*This practice is based on the inappropriate philosophy that our goal as scientists is to 'show a hypothesized effect'.  Our goal as scientists is to ask interesting questions, to collect data carefully and ethically, and to analyze the data to answer our question, NOT to show any one particular effect.*
+
+From an early career stage it is common to think that showing an effect is more valuable than not showing an effect.  This is made worse by 'publication bias' in which it is more difficult to publish papers showing a lack of an effect than those showing an effect (i.e. rejecting the null hypothesis).  This is part of what leads to p-hacking, or doing a variety of things to try and squeeze your p-value below 0.05.
+
+# An Example of P-Hacking from the Sea Otter Data
+If you recall from the class activity on the one-sample t-test, we wanted to use a sample of 10 observations to determine whether the abundance of sea otters along the coast of California was greater that the threshold for de-listing as 'threatened' (3090 otters).  We analyzed the class sample, and then just for practice, each of you pretended that you collected your own sample and each of you analyzed your own data that I provided.  The point of this was to provide you with practice performing these analyses, but also to demonstrate the principles of sampling error and type-I error that we are usually blind to when we analyze our data.
+
+I assigned each person in the class their own dataset to analyze.  
+
+## Import the Class Data
+These data were posted in a Google doc, but I have also downloaded a copy of the data as a csv file and placed this on Canvas.  
+
+Download this file and save it to your working directory for this course
+
+
+```{r import class data}
+class_otter<-read.csv("otter_data_S21.csv")
+
+head(class_otter)
+```
+
+## Analyze the Class Data
+In class, we analyzed the data by hand, but we can also use the `t.test` function in R to analyze our class data as a one-sample t-test.  
+
+Note that this datafile is arranged in a slightly unusual way where the data for the class and for each person are arranged in columns.  So we will specify the class data as class_otter$Class.
+
+```{r}
+t.test(class_otter$Class, mu=3090, alternative="greater")
+```
+
+
+You can see that this analysis recreates what we did in class.
+
+So in this case we did not reject the null hypothesis and would not conclude that we ought to de-list the otters.
+
+As it turns out, this is the correct decision.  I created the data from a normal distribution with a mean of 3050.  So the true population mean, which is usually unknown, was 3050.  So we were correct to not support the alternate hypothesis that the true population mean was greater that 3090.  Remember that I know that we were correct in our inference only because I created the data.  Normally we would never know!
+
+## Principle of Type-I Error
+Recall that when we collect a sample and analyze data we would normally collect only a single sample and draw our inferences from that sample.  But as a class exercise, we each performed a separate analysis.  We know that an alpha of 0.05 means that 5% of the time we will falsely reject the null hypothesis when it is in fact true. 5% is 1/20, so in a class of 20 people, chances are one of you, just by chance would get a sample for which the mean was so large (just by sampling error) that you would falsely reject the null hypothesis (i.e. commit a type-I error).  
+
+This happened to Chance!
+
+If we analyze Chance's data we find...
+```{r}
+t.test(class_otter$Nelson, mu=3090, alternative="greater")
+```
+
+So Chance would reject the null hypothesis (P < 0.05) based on their sample and de-list the otters.  We know this was a type-I error because we know that the null hypothesis is true, but normally we have no idea what the true population mean is (this is why we sample and do statistics!) so we have no idea when we have made a mistake.
+
+This is ok.  When we use an alpha of 0.05 we are implicitly saying that we are comfortable making this sort of mistake (type-I error - falsely rejecting the null hypothesis) 5% of the time.
+
+So this is the kind of error we are comfortable with.  But if we manipulate how we collect or analyze data to *try and get a p-value below 0.05* then we will make this sort of mistake more frequently than 5% of the time.
+
+## Example of p-hacking
+One way in which we might unethically manipulate the results of our statistical test is to either continue to collect data or to stop collecting data based on an interim analysis of what we have found.
+
+To demonstrate this, I will look at Lizzy McGary's data.  Let's say that it is costly to hire people to go out and count sea otters.  Since budgets are tight, let's suppose that Lizzy decided it would be best to analyzed their data after 5 observations instead of completing the intended 10 observations.
+
+Here is what they would have found based on the first 5 observations in their sample...
+```{r}
+t.test(class_otter$McGary[1:5], mu=3090, alternative="greater")
+```
+
+In this case, if their goal were to *show an effect* then they would analyze their data after 5 observations and say "Aha!  I found my effect!  My job is done, I can now go home and write up my paper!!".  We know that this is a mistake because we know that the true population (3050) is below the threshold for de-listing (3090).  We also know that if Lizzy were to have continued to collect their intended 10 observations that they would have correctly failed to reject the null hypothesis
+
+```{r}
+t.test(class_otter$McGary, mu=3090, alternative="greater")
+```
+
+
+But this is *NOT* a regular type-I error.  Type-I errors occur by chance at a rate of alpha.  This error occurred because Lizzy changed their plan based on the results of their test.  If Lizzy had failed to reject the null and their intention was to *show an effect* then they would have continued to collect the full 10 observations.  In fact, I believe that everyone in the class if they were to have analyzed their data after 5 observations would have failed to reject the null (including Chance!).  
+
+So if we change what we do (i.e. change our data collection, change our analysis, etc) based on the results of some preliminary analysis then we will commit type-I errors at a rate much greater than 0.05.
+
+# Final Thoughts
+It is worth remembering that our job as scientists is not to *show* or *prove* anything.  Our job is to ask interesting questions, to collect data in an objective and ethical way, and to analyze those data in an objective and ethical way.  This is the part of the scientific process that we can control.  Whether or not our hypothesis (null or otherwise) is refuted is up to nature!  The data will be the way the data will be.  Maintaining this ethical and objective approach to science is made difficult by the incentives associated with publication success and the publication bias against studies that fail to reject their null hypothesis.
+

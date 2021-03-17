@@ -1,7 +1,7 @@
 ---
 title: 'Lab 7: Cuckoos'
-author: "Your name here"
-date: "Date here"
+author: "Cori Carver"
+date: "March 11 2021"
 output: pdf_document
 ---
 
@@ -24,24 +24,23 @@ First, read in the datafile "cuckooeggs.csv" and take a look at the data.
 \textcolor{red}{\textbf{Question 1} Look at the structure of the cuckoo data. What is the explanatory variable? What is the response variable?}
 
 ```{r}
-# your code here
-
-
+cuckoos <- read.csv("cuckooeggs.csv")
+str(cuckoos)
 
 # code to convert the host-species variable to a "factor", i.e. categorical data
 cuckoos$Host.Species = as.factor(cuckoos$Host.Species) 
 ```
 
-*Your answer here* 
+*The explanatory variable is the host species and the response variable is the egg length.* 
 
 
 \textcolor{red}{\textbf{Question 2} How many species of birds were measured in this study? Using the `str` function (on the entire dataframe object) or `levels` function (on the column of interest) is an easy way to check this.}
 
 ```{r}
-# your code here
+str(cuckoos)
 ```
 
-*Your answer here*
+*There were 6 different bird species measured in this study.*
 
 
 To test whether the data are distributed normally *within each group*, use a Shapiro-Wilk Normality Test.  You'll need to run a test for each species, meaning you'll want to use the subset function to break up your dataset by species.  Here is one example to get you going...
@@ -55,6 +54,7 @@ shapiro.test(cuckoo_HS$Egg.Length)
 # Or
 
 shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Hedge Sparrow"))
+
 ```
 
 
@@ -69,10 +69,45 @@ qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Hedge Sparrow"))}
 \textcolor{red}{\textbf{Question 3} Using the Shapiro-Wilk test for normality, as well as visual inspection of the data (i.e., plotting), evaluate whether cuckoo egg length data is normally distributed *within each group*. Interpret the output of the test.}
 
 ```{r}
-# Your code here
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Hedge Sparrow"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Hedge Sparrow"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Hedge Sparrow"))}
+
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Meadow Pipit"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Meadow Pipit"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Meadow Pipit"))}
+
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Pied Wagtail"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Pied Wagtail"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Pied Wagtail"))}
+
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Robin"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Robin"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Robin"))}
+
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Tree Pipit"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Tree Pipit"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Tree Pipit"))}
+
+shapiro.test(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Wren"))
+{qqnorm(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Wren"))
+qqline(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Wren"))}
+
 ```
 
-*Your answer here*
+*The null hypothesis of the Shapiro Wilk Normality test is that the population is normally distributed: any significant p-value allows us to reject the null hypothesis and conclude that the population is not normally distributed. In a Q-Q plot, data points form a straight line when the data is normally distributed.*
+
+*Hedge-Sparrow-> Shapiro-Wilk: p=0.54, cannot reject null so the data is normally distributed, Plot: data points roughly form a straight line so the data is normally distributed.*
+
+*Meadow Pipit-> Shapiro-Wilk: p=0.009, reject the null so data is not normally distributed, Plot: the data appears to have a nonlinear shape, so the data is not normally distributed.*
+
+*Pied Wagtail-> Shapiro-Wilk: p=0.77, cannot reject null so the data is normally distributed, Plot: this plot appears more difficult to interpret, but based on the p-value provided by the Shapiro-Wilk, I would conclude that this shape is sufficiently linear to claim the data is normally distributed.*
+
+*Robin> Shapiro-Wilk: p=0.52, cannot reject null so the data is normally distributed, Plot: this plot appears more difficult to interpret, but based on the p-value provided by the Shapiro-Wilk, I would conclude that this shape is sufficiently linear to claim the data is normally distributed.*
+
+*Tree Pipit-> Shapiro-Wilk: p=0.09, cannot reject null so the data is normally distributed, Plot: this plot appears more difficult to interpret, but based on the p-value provided by the Shapiro-Wilk, I would conclude that this shape is sufficiently linear to claim the data is normally distributed.*
+
+*Wren-> Shapiro-Wilk: p=0.30, cannot reject null so the data is normally distributed, Plot: this plot appears more difficult to interpret, but based on the p-value provided by the Shapiro-Wilk, I would conclude that this shape is sufficiently linear to claim the data is normally distributed.*
 
 
 
@@ -81,34 +116,49 @@ Recall, the purpose of this research was to test whether the eggs laid by cuckoo
 
 \textcolor{red}{\textbf{Question 4} Give the null and alternative hypotheses for an ANOVA which tests whether egg length differs between host species.}
 
-*Your answer here*
+*Null: The egg length is the same for all the host species.*
+*Alternative: The egg length is not the same for all the host species.*
 
 
 \textcolor{red}{\textbf{Question 5} Run an ANOVA using the function given in lecture slides, and save as a variable. Report the test statistic and P-value.}
 
 ```{r}
-# your code here
+summary(aov(Egg.Length~Host.Species, data = cuckoos))
+cuckooANOVA <- aov(Egg.Length~Host.Species, data = cuckoos)
 ```
 
-*Your answer here* 
+*The test statistic is 10.39 with a p-value of 3.15e-08.* 
 
 
 
 \textcolor{red}{\textbf{Question 6} Interpret the results of your ANOVA. In your answer, make sure to re-visit the initial question/experimental background, report the test statistic, and explicitly state what the p-value is the probability of.}
 
-*Your answer here*
-
-
+*Because p < 0.05, we reject the null hypothesis that all of the egg lengths are the same. The p-value represents the probability of getting an F statistic as big as 10.39 when the null hypothesis is true.*
 
 
 \textcolor{red}{\textbf{Question 7} Besides the assumption of independence and random sampling, what are the assumptions of the ANOVA test? Are they met? You will likely need to do additional coding to evaluate all the assumptions. Tip: if you are missing any necessary packages, install them using $install.packages("package name")$ in the console.}
 
 ```{r}
-# your code here
+#1.The observations must be independent of each other and randomly sampled
+#2. The residuals must be normally distributed (evaluate whether cuckoo egg length data is normally distributed within each group using the Shapiro-Wilk test for normality performed above)
+#3. The groups must have roughly equal standard deviations (ratio of largest to smallest SD < 2)
+#SD of Hedge-Sparrow
+HS_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Tree Pipit"), na.rm = FALSE)
+#SD of Meadow Pipit
+MP_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Meadow Pipit"), na.rm = FALSE)
+#SD of Pied Wagtail
+PW_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Pied Wagtail"), na.rm = FALSE)
+#SD of Robin
+R_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Robin"), na.rm = FALSE)
+#SD of Tree Pipit
+TP_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Tree Pipit"), na.rm = FALSE)
+#SD of Wren
+W_sd <- sd(subset(cuckoos$Egg.Length, cuckoos$Host.Species=="Wren"), na.rm = FALSE)
+#Ratio between largest and smallest SD must be < 2. 
+ratio <- 1.07/0.68
 ```
 
-*Your answer here*
-
+*The residuals must be normally distributed: Each of the residuals are normally distributed except for that of the Meadow Pipit, so this assumption is not fully met. The groups must have roughly equal standard deviations: all of the standard deviations are roughly the same, with the ratio of Robin (smallest, sd=0.68) standard deviation to Pied Wagtail (largest, sd=1.07) is 1.6 (less than the threshold of 2). This assumption is met.* 
 
 
 # Plotting the data
@@ -121,7 +171,22 @@ https://static1.squarespace.com/static/5eb33c095018927ea433a883/t/5f7a84444450c5
 \textcolor{red}{\textbf{Question 8} Create a stripchart to display the egg length data from the cuckoo dataset. Remember to label your axes appropriately. Add error bars (sd or se) and points for each species' mean as demonstrated above. You will have to modify example code to account for 6 groups (species) whereas the examples shown above have different numbers of groups.}
 
 ```{r}
-# Your code here
+# Find each mean
+mean.length <- aggregate(Egg.Length~Host.Species, cuckoos, FUN=mean)
+head(mean.length)
+
+# Find each sd in a table
+sd.length <- aggregate(Egg.Length~Host.Species, cuckoos, FUN=sd)
+
+#Plot
+{stripchart(Egg.Length~Host.Species, vertical= TRUE, method= "jitter", pch=16, col="dodgerblue", data=cuckoos, ylab="Egg Length", xlab="Species", ylim=c(19,26))
+
+#Plot means
+points(mean.length$Egg.Length ~ c(1:length(levels(mean.length$Host.Species))), pch=16, col="black", cex=1.5)
+
+#Plot SD
+segments(x0 = c(1:length(levels(mean.length$Host.Species))), x1 = c(1:length(levels(mean.length$Host.Species))), y0 = mean.length$Egg.Length - sd.length$Egg.Length, y1 = mean.length$Egg.Length + sd.length$Egg.Length, col="black", lwd=2)
+}
 ```
 
 
@@ -134,22 +199,22 @@ The function `TukeyHSD` does pairwise post-hoc tests to compare each pair of spe
 \textcolor{red}{\textbf{Question 9} Run a Tukey test on the cuckoo ANOVA model (i.e. the variable you saved above). Are eggs laid in Tree-Pipit nests significantly different than those laid in Robin's nests?}
 
 ```{r}
-# your code here
+TukeyHSD(cuckooANOVA)
 
 ```
 
-*Your answer here*
+*No, eggs laid in Tree Pipet nests are not significantly different than those laid in Robin nests (p=0.6159630 > 0.05).*
 
 
 \textcolor{red}{\textbf{Question 10} Describe how an F statistic is calculated. What does a large F statistic indicate about your data vs. a small one?}
 
-*Your answer here*
+*An F statistic is a ratio of mean squares, an estimate for variance in a population, where F = variation between sample means / variation within sample means. These variances are calculated by squaring the standard deviation. A large F statistic indicates that the variability of group means is large relative to within group variation. A small F statistic indicates that the variability of group means is small relative to within group variation.*
 
 
 # Next steps in research
 
 \textcolor{red}{\textbf{BONUS (optional)} Re-read the original background presented at the beginning of this lab. What might be an experiment you would run, or additional analyses you would want to conduct to further investigate whether variation in cuckoo egg size is actually an adaptation to disguise their eggs from the host?}
 
-*Your answer here*
+*I would be interested in running an experiment in the field to not only collect more data points, but also to test our hypothesis with more species, particularly those with either a comparatively large or small egg size to the rest of the species we have already collected date on.*
 
 
